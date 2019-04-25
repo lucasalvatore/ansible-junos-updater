@@ -35,7 +35,7 @@
           user: "{{ username }}"
           passwd: "{{ password }}"
 
-    - name: Retrieve facts from devices running Junos OS
+    - name: Show Device Info
       juniper_junos_facts:  
         host: "{{ inventory_hostname }}"
         savedir: "{{ playbook_dir }}"
@@ -59,9 +59,9 @@
         password: "{{ password }}"
       when:
         - (junos.model == "QFX5100-24Q-2P" or junos.model == "QFX5100-48S-6Q")
-        - (junos.version != "17.4R2-S3.2")
+        - (junos.version != "17.4R2-S2.3")
         
-    - name: Copy Junos to QFX4300
+    - name: Copy Junos to EX4300
       junos_scp:
         host: "{{ inventory_hostname }}"
         src: /opt/ansible/software/jinstall-ex-4300-17.4r2-s2.3-signed.tgz
@@ -70,7 +70,7 @@
         password: "{{ password }}"    
       when: 
         - (junos.model == "EX4300-48T")
-        - (junos.version != "17.4R2-S3.2")
+        - (junos.version != "17.4R2-S2.3")
     
     - name: Confirm NETCONF connectivity
       wait_for: 
@@ -91,13 +91,13 @@
           timeout: 300
         register: sw
         notify:
-        - wait_reboot
+          - wait_reboot
       - name: Print Response
         debug:
           var: sw
       when:
         - (junos.model == "QFX5100-24Q-2P" or junos.model == "QFX5100-48S-6Q")
-        - (junos.version != "17.4R2-S3.2")
+        - (junos.version != "17.4R2-S2.3")
 
     - block:
       - name: Install Junos OS package EX4200
@@ -112,13 +112,16 @@
           passwd: "{{ password }}"
         register: sw
         notify:
-        - wait_reboot
+          - wait_reboot
       - name: Print Response
         debug:
           var: sw
       when: 
         - (junos.model == "EX4300-48T")
-        - (junos.version != "17.4R2-S3.2")
+        - (junos.version != "17.4R2-S2.3")
+
+    - pause:
+        minutes: 1
 
   handlers:
     - name: wait_reboot
@@ -126,4 +129,4 @@
         host: "{{ inventory_hostname }}"
         port: "{{ netconf_port }}"
         timeout: "{{ wait_time }}"
-      when: not sw.check_mode  
+      when: sw.check_mode is not defined
