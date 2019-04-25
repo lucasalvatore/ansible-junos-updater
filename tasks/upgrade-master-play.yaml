@@ -1,0 +1,30 @@
+---
+- name: Upgrading Junos YOLO
+  hosts: all
+  roles:
+    - Juniper.junos
+  vars:
+    ansible_python_interpreter: "/opt/ansible/ansible-venv/bin/python"
+    netconf_port: 830
+    wait_time: 900
+  connection: local
+  gather_facts: no
+
+  vars_prompt:
+    - name: username
+      prompt: Junos Username
+      private: no
+    - name: password
+      prompt: Junos Password
+      private: yes
+   
+
+  tasks:
+   - include_tasks: prechecks.yaml
+   - include_tasks: copy-images.yaml
+   - include_tasks: junos-upgrade-qfx.yaml
+   - include_tasks: junos-upgrade-ex.yaml
+   - include_tasks: pause.yaml
+   - include_tasks: wait-for-reboot.yaml
+#   - include tasks: postchecks.yaml
+

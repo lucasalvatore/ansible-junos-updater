@@ -1,0 +1,22 @@
+---
+- name: Install Junos OS package EX4200
+  juniper_junos_software:
+    version: "17.4R2-S2.3"
+    cleanfs: no
+    local_package: "/opt/ansible/software/jinstall-ex-4300-17.4r2-s2.3-signed.tgz"
+    remote_package: "/var/tmp/jinstall-ex-4300-17.4r2-s2.3-signed.tgz"
+    checksum:
+    reboot: true
+    validate: false
+    force_host: yes
+    logfile: /opt/ansible/logs/{{ inventory_hostname }}-logs.log
+    user: "{{ username }}"
+    passwd: "{{ password }}"
+  register: sw
+  when: 
+    - (junos.model == "EX4300-48T")
+    - (junos.version != "17.4R2-S2.3")
+
+- name: Check Status
+  debug:
+    var: sw

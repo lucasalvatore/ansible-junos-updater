@@ -1,0 +1,6 @@
+---
+- name: Confirm connectivity is restored
+  wait_for: 
+    host: "{{ ansible_host }}" 
+    port: "{{ netconf_port }}"
+    timeout: "{{ wait_time }}"

@@ -1,0 +1,4 @@
+---
+- pause:
+    prompt: "Pausing to let devices reboot"
+    seconds: 90
