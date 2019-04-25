@@ -1,0 +1,16 @@
+---
+- name: Running Pre-Checks
+  juniper_junos_command:
+    commands:
+      - show bgp summary
+      - show interfaces terse
+      - show lacp interfaces
+      - show lldp neighbors
+    format: text
+    dest_dir: "./output/pre-checks/"
+    return_output: false
+    provider:
+      host: "{{ ansible_host }}"
+      port: 22
+      user: "{{ username }}"
+      passwd: "{{ password }}"
