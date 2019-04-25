@@ -6,7 +6,7 @@
   vars:
     ansible_python_interpreter: "/opt/ansible/ansible-venv/bin/python"
     netconf_port: 830
-    wait_time: 1200
+    wait_time: 900
   connection: local
   gather_facts: no
 
@@ -71,27 +71,21 @@
       when: 
         - (junos.model == "EX4300-48T")
         - (junos.version != "17.4R2-S2.3")
-    
-    - name: Confirm NETCONF connectivity
-      wait_for: 
-        host: "{{ ansible_host }}" 
-        port: "{{ netconf_port }}"
-        timeout: 5
      
     - block:
       - name: Install Junos OS package QFX5K
         juniper_junos_software:
           version: "17.4R2-S2.3"
+          cleanfs: no
+          local_package: "/opt/ansible/software/jinstall-host-qfx-5-17.4R2-S2.3-signed.tgz"
           remote_package: "/var/tmp/jinstall-host-qfx-5-17.4R2-S2.3-signed.tgz"
+          checksum:
           reboot: true
           validate: false
           logfile: /opt/ansible/logs/{{ inventory_hostname }}-logs.log
           user: "{{ username }}"
           passwd: "{{ password }}"
-          timeout: 300
         register: sw
-        notify:
-          - wait_reboot
       - name: Print Response
         debug:
           var: sw
@@ -103,7 +97,10 @@
       - name: Install Junos OS package EX4200
         juniper_junos_software:
           version: "17.4R2-S2.3"
+          cleanfs: no
+          local_package: "/opt/ansible/software/jinstall-ex-4300-17.4r2-s2.3-signed.tgz"
           remote_package: "/var/tmp/jinstall-ex-4300-17.4r2-s2.3-signed.tgz"
+          checksum:
           reboot: true
           validate: false
           force_host: yes
@@ -111,8 +108,6 @@
           user: "{{ username }}"
           passwd: "{{ password }}"
         register: sw
-        notify:
-          - wait_reboot
       - name: Print Response
         debug:
           var: sw
@@ -121,12 +116,11 @@
         - (junos.version != "17.4R2-S2.3")
 
     - pause:
-        minutes: 1
+        prompt: "Pausing for 90 seconds to let devices reboot"
+        seconds: 90
 
-  handlers:
-    - name: wait_reboot
+    - name: Confirm connectivity is restored
       wait_for: 
-        host: "{{ inventory_hostname }}"
+        host: "{{ ansible_host }}" 
         port: "{{ netconf_port }}"
         timeout: "{{ wait_time }}"
-      when: sw.check_mode is not defined
