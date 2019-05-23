@@ -1,5 +1,6 @@
 ---
 - name: Confirm connectivity is restored
+  ignore_errors: yes
   wait_for: 
     host: "{{ ansible_host }}" 
     port: "{{ netconf_port }}"
