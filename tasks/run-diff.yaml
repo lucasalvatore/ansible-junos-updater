@@ -1,0 +1,7 @@
+---
+- name: Run diff between pre and post checks
+  local_action: command python3 filecheck.py
+  register: output
+
+- name: Print diffs
+  debug: var=output.stdout_lines

@@ -1,20 +1,23 @@
 ---
 - name: Install Junos OS package QFX5K
   juniper_junos_software:
-    version: "17.4R2-S2.3"
+    install_timeout: 2700
+    version: "17.4R2-S4.1"
     cleanfs: no
-    local_package: "/opt/ansible/software/jinstall-host-qfx-5-17.4R2-S2.3-signed.tgz"
-    remote_package: "/var/tmp/jinstall-host-qfx-5-17.4R2-S2.3-signed.tgz"
+    local_package: "/opt/ansible/software/jinstall-host-qfx-5-17.4R2-S4.1-signed.tgz"
+    remote_package: "/var/tmp/jinstall-host-qfx-5-17.4R2-S4.1-signed.tgz"
+    nssu: yes
     checksum:
     reboot: true
     validate: false
+    force_host: yes
     logfile: /opt/ansible/logs/{{ inventory_hostname }}-logs.log
     user: "{{ username }}"
     passwd: "{{ password }}"
   register: sw
   when:
     - (junos.model == "QFX5100-24Q-2P" or junos.model == "QFX5100-48S-6Q")
-    - (junos.version != "17.4R2-S2.3")  
+    - (junos.version != "17.4R2-S4.1")  
 
 - name: Check Status
   debug:

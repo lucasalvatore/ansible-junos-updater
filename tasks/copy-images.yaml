@@ -9,13 +9,13 @@
 - name: Copy Junos to QFX5100
   junos_scp:
     host: "{{ inventory_hostname }}"
-    src: /opt/ansible/software/jinstall-host-qfx-5-17.4R2-S2.3-signed.tgz
+    src: /opt/ansible/software/jinstall-host-qfx-5-17.4R2-S4.1-signed.tgz
     dest: /var/tmp/
     username: "{{ username }}"
     password: "{{ password }}"
   when:
     - (junos.model == "QFX5100-24Q-2P" or junos.model == "QFX5100-48S-6Q")
-    - (junos.version != "17.4R2-S3.2")
+    - (junos.version != "17.4R2-S4.1")
         
 - name: Copy Junos to EX4300
   junos_scp:

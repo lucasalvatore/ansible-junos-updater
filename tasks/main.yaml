@@ -26,5 +26,11 @@
    - include_tasks: junos-upgrade-ex.yaml
    - include_tasks: pause.yaml
    - include_tasks: wait-for-reboot.yaml
-#   - include tasks: postchecks.yaml
+   - include tasks: postchecks.yaml
+
+- name: Checking for differences
+  hosts: 127.0.0.1
+  connection: local
+  tasks:
+   - include_tasks: run-diff.yaml
 
